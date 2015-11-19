@@ -46,6 +46,7 @@ aside{
 }
 
 article{
+  width: 500px;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -74,6 +75,9 @@ article{
     li{
       margin: 10px;
     }
+  }
+  p{
+    padding: 10px;
   }
 }
 
