@@ -3,7 +3,7 @@ var Backbone = require('backbone');
 var MovieModel = require('./model');
 
 module.exports = Backbone.Collection.extend ({
-  url: 'http://tiy-fee-rest.herokuapp.com/collections/imdbremake',
+  url: 'http://tiny-tiny.herokuapp.com/collections/imdbremake1',
   model: MovieModel,
   initialize: function(){
 
@@ -47,9 +47,10 @@ module.exports = Backbone.View.extend({
     'submit form': 'onAddMovie'
   },
   initialize: function(){
-      this.model = new MovieModel();
+    this.model = new MovieModel();
 
   },
+
   onAddMovie: function(event){
     event.preventDefault();
     var newMovie = {
@@ -61,7 +62,7 @@ module.exports = Backbone.View.extend({
     };
     this.model.set(newMovie);
     this.model.save();
-    this.add();
+    this.render();
     this.$el.find('input, textarea').val('');
   },
   template: _.template(tmpl.form),
@@ -85,8 +86,6 @@ module.exports = Backbone.View.extend({
   render: function () {
     var markup = this.template({});
     this.$el.html(markup);
-    // in order to call .el off of render we need to return this
-    // bookViewInstance.render().el - yields all markup and data from model
     return this;
   }
 });
@@ -105,6 +104,14 @@ var HeaderView = require('./headerView');
 
 module.exports = Backbone.View.extend({
   el: '#layoutView',
+  events: {
+    'click .revealAdd': 'onRevealForm'
+  },
+  onRevealForm: function(event){
+    event.preventDefault();
+    console.log('blue');
+    this.$('.addForm').toggleClass('hidden');
+  },
   initialize: function(){
     var that = this;
     var formHTML = new FormView();
@@ -130,7 +137,7 @@ $(function () {
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
-  urlRoot: 'http://tiy-fee-rest.herokuapp.com/collections/imdbremake',
+  urlRoot: 'http://tiny-tiny.herokuapp.com/collections/imdbremake1',
   idAttribute: '_id',
   defaults: function() {
     return {
@@ -154,16 +161,42 @@ var _ = require('underscore');
 var tmpl = require('./templates');
 
 module.exports = Backbone.View.extend({
-  events: {
-    'click .delete': 'onDelete'
-  },
-  onDelete: function(){
-    this.model.destroy();
-    this.remove();
-  },
   model: null,
   tagName: 'article',
   template: _.template(tmpl.movie),
+  events: {
+    'click .delete': 'onDelete',
+    'click .edit': 'onEdit',
+    'click .submitEdit': 'onSubmitEdit',
+
+  },
+  
+  onDelete: function(event){
+    event.preventDefault();
+    this.model.destroy();
+    this.remove();
+  },
+  onEdit: function(event){
+    event.preventDefault();
+    this.$('.editForm').toggleClass('hidden');
+    //remove hidden
+  },
+  onSubmitEdit: function(event){
+    event.preventDefault();
+    this.$('.editForm').toggleClass('hidden');
+    var editMovie = {
+      title: this.$el.find('input[name="editTitle"]').val(),
+      starring: this.$el.find('input[name="editStarring"]').val(),
+      released: this.$el.find('input[name="editReleased"]').val(),
+      cover: this.$el.find('input[name="editCover"]').val(),
+      description: this.$el.find('textarea[name="editDescription"]').val()
+    };
+    var movieEdit = this.model;
+    movieEdit.set(editMovie);
+    //add hidden
+    movieEdit.save();
+    this.render();
+  },
   initialize: function(){},
   render: function(){
     var markup = this.template(this.model.toJSON());
@@ -12835,21 +12868,36 @@ return jQuery;
 },{}],12:[function(require,module,exports){
 module.exports = {
   movie: [
+    "<h3><%= title %></h3>",
+    "<h6><%= released %></h6>",
     "<img src = '<%= cover %>'>",
-    "<h3><%= title %>",
-    "<h5><%= starring %>",
-    "<h6><%= released %>",
-    "<p><%= description %>",
-    "<button class='delete'>DELETE</button>"
+    "<h5>Starring: <%= starring %></h5>",
+    "<p><%= description %></p>",
+    "<ul class='btns'>",
+      "<li>",
+        "<button class='delete'>DELETE</button>",
+      "</li>",
+      "<li>",
+        "<button class='edit'>EDIT</button>",
+      "</li>",
+    "</ul>",
+    "<form class='editForm hidden'>",
+      "<input type='text' placeholder='Movie Title' name='editTitle'>",
+      "<input type='text' placeholder='Lead Actors' name='editStarring'>",
+      "<input type='text' placeholder='Year Released' name='editReleased'>",
+      "<input type='text' placeholder='Movie Image URL' name='editCover'>",
+      "<textarea name='editDescription' placeholder='Movie Description'></textarea>",
+      "<button type='submit' class='submitEdit' value='Add Movie'>Submit Edit</button>",
+    "</form>"
   ].join(''),
 
   form: [
-    "<form>",
+    "<form class='addForm hidden'>",
       "<input type='text' placeholder='Movie Title' name='title'>",
-      "<input type='text' placeholder='Movie Stars' name='starring'>",
+      "<input type='text' placeholder='Lead Actors' name='starring'>",
       "<input type='text' placeholder='Year Released' name='released'>",
-      "<input type='text' placeholder='Movie Image' name='cover'>",
-      "<textarea name='description'></textarea>",
+      "<input type='text' placeholder='Movie Image URL' name='cover'>",
+      "<textarea name='description' placeholder='Movie Description'></textarea>",
       "<input type='submit' value='Add Movie'>",
     "</form>"
   ].join(''),
@@ -12857,8 +12905,8 @@ module.exports = {
       "<h2>IMDBACKBONE</h2>",
       "<nav>",
         "<ul>",
-          "<li>Home</li>",
-          "<li>Add Movie</li>",
+          "<li><button>Home</button></li>",
+          "<li><button class='revealAdd'>Add Movie</button></li>",
         "</ul>",
       "</nav>"
     ].join(""),

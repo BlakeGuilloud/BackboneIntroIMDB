@@ -2,7 +2,7 @@ var Backbone = require('backbone');
 var MovieModel = require('./model');
 
 module.exports = Backbone.Collection.extend ({
-  url: 'http://tiy-fee-rest.herokuapp.com/collections/imdbremake',
+  url: 'http://tiny-tiny.herokuapp.com/collections/imdbremake1',
   model: MovieModel,
   initialize: function(){
 

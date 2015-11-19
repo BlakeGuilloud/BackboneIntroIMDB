@@ -11,6 +11,14 @@ var HeaderView = require('./headerView');
 
 module.exports = Backbone.View.extend({
   el: '#layoutView',
+  events: {
+    'click .revealAdd': 'onRevealForm'
+  },
+  onRevealForm: function(event){
+    event.preventDefault();
+    console.log('blue');
+    this.$('.addForm').toggleClass('hidden');
+  },
   initialize: function(){
     var that = this;
     var formHTML = new FormView();

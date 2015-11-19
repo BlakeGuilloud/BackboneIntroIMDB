@@ -13,9 +13,10 @@ module.exports = Backbone.View.extend({
     'submit form': 'onAddMovie'
   },
   initialize: function(){
-      this.model = new MovieModel();
+    this.model = new MovieModel();
 
   },
+
   onAddMovie: function(event){
     event.preventDefault();
     var newMovie = {
@@ -27,7 +28,7 @@ module.exports = Backbone.View.extend({
     };
     this.model.set(newMovie);
     this.model.save();
-    this.add();
+    this.render();
     this.$el.find('input, textarea').val('');
   },
   template: _.template(tmpl.form),

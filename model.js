@@ -1,7 +1,7 @@
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
-  urlRoot: 'http://tiy-fee-rest.herokuapp.com/collections/imdbremake',
+  urlRoot: 'http://tiny-tiny.herokuapp.com/collections/imdbremake1',
   idAttribute: '_id',
   defaults: function() {
     return {
